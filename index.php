@@ -5,7 +5,7 @@ $f3->route('POST /login-with-facebook', function($f3, $params) {
     $postBody = json_decode(urldecode($f3->get('BODY')), true);
     $userId = $postBody['userId'];
     $accessToken = $postBody['accessToken'];
-    $url = "https://graph.facebook.com/".$userId."?access_token=".$accessToken."&fields=id,name,email";
+    $url = "https://graph.facebook.com/".$userId."?access_token=".$accessToken."&fields=id";
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
@@ -13,20 +13,20 @@ $f3->route('POST /login-with-facebook', function($f3, $params) {
     curl_close($ch);
     $content = str_replace("\u0040", "@", $content);
     $data = json_decode($content, true);
-    $email = $data["email"];
+    $id = $data["id"];
 
     $output = array('error' => '');
-    if (empty($email)) {
+    if (empty($id)) {
         $output['error'] = 'ERROR_EMPTY_USERNAME_OR_PASSWORD';
     } else {
-        if (!IsPlayerWithUsernameFound($loginType, $email)) {
+        if (!IsPlayerWithUsernameFound($loginType, $id)) {
             // Make new player if not existed
-            InsertNewPlayer($loginType, $email, '');
+            InsertNewPlayer($loginType, $id, '');
         }
         $playerAuthDb = new PlayerAuth();
         $playerAuth = $playerAuthDb->load(array(
             'username = ? AND type = ?',
-            $email,
+            $id,
             $loginType
         ));
         $playerDb = new Player();
