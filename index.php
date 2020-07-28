@@ -24,7 +24,7 @@ $f3->route('POST /login-with-facebook', function($f3, $params) {
             InsertNewPlayer($loginType, $id, '');
         }
         $playerAuthDb = new PlayerAuth();
-        $playerAuth = $playerAuthDb->load(array(
+        $playerAuth = $playerAuthDb->findone(array(
             'username = ? AND type = ?',
             $id,
             $loginType
