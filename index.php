@@ -1,8 +1,7 @@
 <?php
-$f3->route('POST /login-with-facebook', function($f3, $params) {
+$actions['login-with-facebook'] = function($params, $postBody) {
     // Facebook login type is 10
     $loginType = 10;
-    $postBody = json_decode(urldecode($f3->get('BODY')), true);
     $userId = $postBody['userId'];
     $accessToken = $postBody['accessToken'];
     $url = "https://graph.facebook.com/".$userId."?access_token=".$accessToken."&fields=id";
@@ -39,5 +38,12 @@ $f3->route('POST /login-with-facebook', function($f3, $params) {
         $output['player'] = CursorToArray($player);
     }
     echo json_encode($output);
-});
+};
+
+if (!\Base::instance()->get('enable_action_request_query')) {
+    $f3->route('POST /login-with-facebook', function($f3, $params) {
+        DoPostAction('login-with-facebook', $f3, $params);
+    });
+}
+
 ?>
